@@ -1,29 +1,30 @@
 const Lights = require('./Lights');
+const config = require('./tally.config.json');
 const { Atem } = require('atem-connection');
 
-const conn = new Atem();
-const lights = new Lights(17, 22, 27);
-const CAMERA_INPUT = 1; // The input ID that this tally is listening to.
-const DISCONNECTED_FLASH_FREQUENCY = 700; // Frequency of the flashing in milliseconds
+const switcher = new Atem();
+const lights = new Lights(config.ledGpioPins.red, config.ledGpioPins.green, config.ledGpioPins.blue);
 
 // Flash to indicate the tally is currently disconnected
-lights.startFlashing(255, 0, 0, DISCONNECTED_FLASH_FREQUENCY);
+lights.startFlashing(config.disconnectedFlashColor.red, config.disconnectedFlashColor.green,
+	config.disconnectedFlashColor.blue, config.disconnectedFlashFrequency);
 
 console.log("Connecting...");
-conn.connect('172.16.11.25');
+switcher.connect(config.switcherIP);
 
-conn.on('connected', () => {
+switcher.on('connected', () => {
 	console.log("Connected.");
 	lights.stopFlashing();
 });
 
-conn.on('disconnected', () => {
+switcher.on('disconnected', () => {
 	console.log("Lost connection!");
 	// Flash to indicate the tally is currently disconnected
-	lights.startFlashing(255, 0, 0, DISCONNECTED_FLASH_FREQUENCY);
+	lights.startFlashing(config.disconnectedFlashColor.red, config.disconnectedFlashColor.green,
+		config.disconnectedFlashColor.blue, config.disconnectedFlashFrequency);
 });
 
-conn.on('stateChanged', (state) => {
+switcher.on('stateChanged', (state) => {
 	// State does not always contain ME video data; Return if necessary data is missing.
 	if(!state || !state.video || !state.video.ME || !state.video.ME[0])
 		return;
@@ -34,12 +35,12 @@ conn.on('stateChanged', (state) => {
 	// If faded to black, lights are always off
 	if(state.video.ME[0].fadeToBlack && state.video.ME[0].fadeToBlack.isFullyBlack) {
 		lights.off();
-	// This camera is featured in a transition
-	} else if(state.video.ME[0].inTransition && (program === CAMERA_INPUT || preview === CAMERA_INPUT)) {
+	// This camera is either in program OR preview, and there is an ongoing transition.
+	} else if(state.video.ME[0].inTransition && (program === config.inputID || preview === config.inputID)) {
 		lights.yellow();
-	} else if(program === CAMERA_INPUT) {
+	} else if(program === config.inputID) {
 		lights.red();
-	} else if(preview === CAMERA_INPUT) {
+	} else if(preview === config.inputID) {
 		lights.green();
 	} else { // Camera is not in preview or program
 		lights.off();
