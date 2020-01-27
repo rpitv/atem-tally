@@ -1,0 +1,23 @@
+{
+  "name": "atem-tally",
+  "version": "1.0.0",
+  "description": "Node.js ATEM tally interface built to run on a Raspberry Pi",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rpitv/atem-tally.git"
+  },
+  "author": "RPI TV",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rpitv/atem-tally/issues"
+  },
+  "homepage": "https://github.com/rpitv/atem-tally#readme",
+  "dependencies": {
+    "atem-connection": "^1.3.0",
+    "pigpio": "^3.0.0"
+  }
+}
