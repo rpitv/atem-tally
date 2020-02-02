@@ -12,9 +12,13 @@ if(!config.tallies || !config.switcherIP) {
 
 for(let i = 0; i < config.tallies.length; i++) {
 	tallies[i] = {};
+	/**
+	 * @type {{inputID, ledGpioPins: {red,green,blue},
+	 * invertSignals, disconnectedFlashColor: {red,blue,green}, disconnectedFlashFrequency}}
+	 */
 	tallies[i].config = config.tallies[i];
 	tallies[i].lights = new Lights(tallies[i].config.ledGpioPins.red, tallies[i].config.ledGpioPins.green,
-		tallies[i].config.ledGpioPins.blue);
+		tallies[i].config.ledGpioPins.blue, tallies[i].config.invertSignals);
 
 	// Flash to indicate the tally is currently disconnected
 	tallies[i].lights.startFlashing(tallies[i].config.disconnectedFlashColor.red, tallies[i].config.disconnectedFlashColor.green,
