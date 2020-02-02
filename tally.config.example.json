@@ -12,7 +12,8 @@
       "red": 255,
       "green": 0,
       "blue": 0
-    }
+    },
+    "invertSignals": false
   },
     {
       "inputID": 2,
@@ -26,6 +27,7 @@
         "red": 255,
         "green": 0,
         "blue": 0
-      }
+      },
+      "invertSignals": false
     }]
 }
