@@ -105,6 +105,7 @@ dist
 # TernJS port file
 .tern-port
 
+# IDEA files
 .idea/.gitignore
 .idea/atem-tally.iml
 .idea/dictionaries/
@@ -112,3 +113,6 @@ dist
 .idea/misc.xml
 .idea/modules.xml
 .idea/vcs.xml
+
+# Tally config
+tally.config.json
