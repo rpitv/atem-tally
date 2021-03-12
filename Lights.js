@@ -29,7 +29,7 @@ class Lights {
      * @param redPwm {number} PWM value to flash for the red LED
      * @param greenPwm {number} PWM value to flash for the green LED
      * @param bluePwm {number} PWM value to flash for the blue LED
-     * @param frequency Frequency in milliseconds to flash the LEDs at.
+     * @param frequency {number} Frequency in milliseconds to flash the LEDs at.
      */
     startFlashing(redPwm, greenPwm, bluePwm, frequency) {
         this.stopFlashing();
@@ -100,6 +100,9 @@ class Lights {
             green = !green;
             blue = !blue;
         }
+
+        if(red && green && blue)
+            red = green = blue = false;
 
         this.redLight.digitalWrite(red ? 1 : 0);
         this.greenLight.digitalWrite(green ? 1 : 0);

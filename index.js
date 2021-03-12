@@ -3,6 +3,7 @@ const config = require('./tally.config.json');
 const { Atem } = require('atem-connection');
 
 const switcher = new Atem();
+// Each tally is an object with its own configuration properties and a set of R/G/B LEDs.
 const tallies = [];
 
 if(!config.tallies || !config.switcherIP) {
@@ -17,9 +18,11 @@ for(let i = 0; i < config.tallies.length; i++) {
 	 * invertSignals, disconnectedFlashColor: {red,blue,green}, disconnectedFlashFrequency}}
 	 */
 	tallies[i].config = config.tallies[i];
+
 	tallies[i].lights = new Lights(tallies[i].config.ledGpioPins.red, tallies[i].config.ledGpioPins.green,
 		tallies[i].config.ledGpioPins.blue, tallies[i].config.invertSignals);
 
+	tallies[i].lights.write(true, false, false);
 	// Flash to indicate the tally is currently disconnected
 	tallies[i].lights.startFlashing(tallies[i].config.disconnectedFlashColor.red, tallies[i].config.disconnectedFlashColor.green,
 		tallies[i].config.disconnectedFlashColor.blue, tallies[i].config.disconnectedFlashFrequency);
@@ -30,7 +33,7 @@ switcher.connect(config.switcherIP);
 
 switcher.on('connected', () => {
 	console.log("Connected.");
-	for(let i = 0; i < config.tallies.length; i++) {
+	for(let i = 0; i < tallies.length; i++) {
 		tallies[i].lights.stopFlashing();
 	}
 });
@@ -38,9 +41,10 @@ switcher.on('connected', () => {
 switcher.on('disconnected', () => {
 	console.log("Lost connection!");
 	// Flash to indicate the tally is currently disconnected
-	for(let i = 0; i < config.tallies.length; i++) {
-		tallies[i].lights.startFlashing(tallies[i].config.disconnectedFlashColor.red, tallies[i].config.disconnectedFlashColor.green,
-			tallies[i].config.disconnectedFlashColor.blue, tallies[i].config.disconnectedFlashFrequency);
+	for(let i = 0; i < tallies.length; i++) {
+		tallies[i].lights.startFlashing(tallies[i].config.disconnectedFlashColor.red,
+			tallies[i].config.disconnectedFlashColor.green, tallies[i].config.disconnectedFlashColor.blue,
+			tallies[i].config.disconnectedFlashFrequency);
 	}
 });
 

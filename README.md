@@ -1,9 +1,11 @@
 # ATEM Tally for Raspberry Pi
 This is a simple camera tally system built to work with Blackmagic Design ATEM 2 switchers on a Raspberry Pi.
 
+Note: As of 03/12/2021 I am unable to verify this code works due to the pandemic, however I _believe_ it was working a year ago.
+
 Necessary supplies:
 * Raspberry Pi (any should do, as long as it has GPIO and network connectivity)
-* R/G/B LEDs or one RGB LED
+* R/G/B LEDs or at least one RGB LED
 * Ethernet connection to your switcher
 
 1. Connect your LED(s) to the appropriate GPIO pins and edit the config file to contain the right pin numbers.
