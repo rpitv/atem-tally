@@ -7,16 +7,19 @@ class Lights {
 
     /**
      * Constructor
-     * @param redGpioPort GPIO pin corresponding to the red LED
-     * @param greenGpioPort GPIO pin corresponding to the green LED
-     * @param blueGpioPort GPIO pin corresponding to the blue LED
+     * @param redGpioPort {number} GPIO pin corresponding to the red LED
+     * @param greenGpioPort {number} GPIO pin corresponding to the green LED
+     * @param blueGpioPort {number} GPIO pin corresponding to the blue LED
+     * @param invert {boolean} Whether the signals to these lights should be inverted before writing.
+     *        See {@link pwmWrite} and {@link write}
      */
-    constructor(redGpioPort, greenGpioPort, blueGpioPort) {
+    constructor(redGpioPort, greenGpioPort, blueGpioPort, invert) {
         this.redLight = new Gpio(redGpioPort, {mode: Gpio.OUTPUT});
         this.greenLight = new Gpio(greenGpioPort, {mode: Gpio.OUTPUT});
         this.blueLight = new Gpio(blueGpioPort, {mode: Gpio.OUTPUT});
         this.flashTimer = null;
         this.flashStateIsOn = false;
+        this.invert = invert;
     }
 
     /**
@@ -26,7 +29,7 @@ class Lights {
      * @param redPwm {number} PWM value to flash for the red LED
      * @param greenPwm {number} PWM value to flash for the green LED
      * @param bluePwm {number} PWM value to flash for the blue LED
-     * @param frequency Frequency in milliseconds to flash the LEDs at.
+     * @param frequency {number} Frequency in milliseconds to flash the LEDs at.
      */
     startFlashing(redPwm, greenPwm, bluePwm, frequency) {
         this.stopFlashing();
@@ -92,6 +95,15 @@ class Lights {
      * @param blue {boolean} Whether the blue LED should be turned on.
      */
     write(red = false, green = false, blue = false) {
+        if(this.invert) {
+            red = !red;
+            green = !green;
+            blue = !blue;
+        }
+
+        if(red && green && blue)
+            red = green = blue = false;
+
         this.redLight.digitalWrite(red ? 1 : 0);
         this.greenLight.digitalWrite(green ? 1 : 0);
         this.blueLight.digitalWrite(blue ? 1 : 0);
@@ -104,6 +116,12 @@ class Lights {
      * @param blue {number} Blue LED PWM value. Expected to be between 0 and 255, inclusive.
      */
     pwmWrite(red, green, blue) {
+        if(this.invert) {
+            red = 255 - red;
+            green = 255 - green;
+            blue = 255 - blue;
+        }
+
         this.redLight.pwmWrite(red);
         this.greenLight.pwmWrite(green);
         this.blueLight.pwmWrite(blue);
