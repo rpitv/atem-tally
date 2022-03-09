@@ -41,6 +41,15 @@ class Blinker {
      * Constructor
      * @param millis Number of milliseconds between each toggle of the state of this Blinker.
      *   Expected to be greater than 0.
+     * @param start Whether the blinker should start as soon as constructed. If set to false,
+     *   you can start the Blinker by calling {@link #start()}
+     * @throws Error if millis is less than or equal to 0.
+     */
+    public constructor(millis: number, start: boolean);
+    /**
+     * Constructor
+     * @param millis Number of milliseconds between each toggle of the state of this Blinker.
+     *   Expected to be greater than 0.
      * @param start Whether this Blinker should immediately be started upon construction.
      *   Defaults true.
      * @throws Error if millis is less than or equal to 0.

@@ -46,6 +46,15 @@ class Lights {
      *   writing. E.g., true = off and false = on.
      */
     constructor(redGpioPort: number, greenGpioPort: number, blueGpioPort: number, invert: boolean) {
+        if (redGpioPort == greenGpioPort ||
+            greenGpioPort == blueGpioPort ||
+            redGpioPort == blueGpioPort
+        ) {
+            throw new Error('GPIO pins must all be unique.');
+        }
+        if (redGpioPort < 0 || greenGpioPort < 0 || blueGpioPort < 0) {
+            throw new Error('GPIO pins must be greater than or equal to 0.');
+        }
         this.redLight = new Gpio(redGpioPort, { mode: Gpio.OUTPUT });
         this.greenLight = new Gpio(greenGpioPort, { mode: Gpio.OUTPUT });
         this.blueLight = new Gpio(blueGpioPort, { mode: Gpio.OUTPUT });
@@ -91,7 +100,7 @@ class Lights {
 
             this.blinker = new Blinker(frequency).subscribe((state: boolean) => {
                 if (state) {
-                    this.write(true, true, true);
+                    this.write(red, blue, green);
                 } else {
                     this.write(false, false, false);
                 }
@@ -128,6 +137,7 @@ class Lights {
 
     /**
      * Turn off all three LEDs. Also disables any flashing.
+     *   Accomplishes this by writing a digital off signal to all 3 LEDs.
      */
     public off(): void {
         this.stopFlashing();
@@ -192,7 +202,7 @@ class Lights {
             }
 
             if (red && green && blue) {
-                red = green = blue = false;
+                throw new Error('You may not digital write to all three LEDs at the same time.');
             }
 
             this.redLight.digitalWrite(red ? 1 : 0);
