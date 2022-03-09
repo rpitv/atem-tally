@@ -48,6 +48,7 @@ Run the following script in order to begin development:
 git clone https://github.com/rpitv/atem-tally.git
 cd atem-tally/
 npm install
+npm run prepare
 ```
 
 You are now ready to write code. All application code is located within [/src](./src). Begin writing in your `.ts` files. It is presumed you will not be developing on a Raspberry Pi. If you do, then you may run the application using `npm start`. Otherwise, use `npm test` to run unit tests on your code.
