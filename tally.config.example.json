@@ -1,20 +1,21 @@
 {
   "switcherIP": "192.168.1.25",
-  "tallies": [{
-    "inputID": 1,
-    "ledGpioPins": {
-      "red": 17,
-      "green": 22,
-      "blue": 27
+  "tallies": [
+    {
+      "inputID": 1,
+      "ledGpioPins": {
+        "red": 17,
+        "green": 22,
+        "blue": 27
+      },
+      "disconnectedFlashFrequency": 700,
+      "disconnectedFlashColor": {
+        "red": 0,
+        "green": 0,
+        "blue": 255
+      },
+      "invertSignals": false
     },
-    "disconnectedFlashFrequency": 700,
-    "disconnectedFlashColor": {
-      "red": 0,
-      "green": 0,
-      "blue": 255
-    },
-    "invertSignals": false
-  },
     {
       "inputID": 2,
       "ledGpioPins": {
@@ -29,5 +30,6 @@
         "blue": 255
       },
       "invertSignals": false
-    }]
+    }
+  ]
 }

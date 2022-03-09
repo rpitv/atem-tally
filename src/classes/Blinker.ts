@@ -5,7 +5,6 @@
  *   {@link Blinker#stop} is called.
  */
 class Blinker {
-
     /**
      * Number of milliseconds between each toggle of the state on and off.
      * @private
@@ -15,7 +14,7 @@ class Blinker {
      * Node.JS interval timer, if the blinker is currently running. Otherwise null.
      * @private
      */
-    private timer: NodeJS.Timer|null = null;
+    private timer: NodeJS.Timer | null = null;
     /**
      * The state that was most recently passed to all subscribers. Even if there are
      *   no current subscribers, this state will continue to update until {@link #stop}
@@ -56,7 +55,7 @@ class Blinker {
      */
     public constructor(millis: number, start?: boolean) {
         if (millis <= 0) {
-            throw new Error('Milliseconds must be greater than or equal to 1.');
+            throw new Error("Milliseconds must be greater than or equal to 1.");
         }
         this.millis = millis;
         if (start || start === undefined) {

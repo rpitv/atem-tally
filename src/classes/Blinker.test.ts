@@ -1,75 +1,81 @@
-import Blinker from '../src/classes/Blinker';
+import Blinker from "./Blinker";
 
 jest.useFakeTimers();
 
-it('Throws error when milliseconds equal to 0.', () => {
+it("Throws error when milliseconds equal to 0.", () => {
     expect(() => {
         new Blinker(0);
     }).toThrow(Error);
 });
 
-it('Throws error when milliseconds less than 0.', () => {
+it("Throws error when milliseconds less than 0.", () => {
     expect(() => {
         new Blinker(-100);
     }).toThrow(Error);
 });
 
-it('Auto-starts when only milliseconds is passed to constructor.', () => {
-    expect(new Promise((resolve, reject) => {
-        const timeout: NodeJS.Timer = setTimeout(() => {
-            resolve(false);
-        }, 1000);
-        try {
-            new Blinker(100).subscribe(() => {
-                resolve(true);
-                clearTimeout(timeout);
-            });
-        } catch (e) {
-            reject(e);
-        }
-    })).resolves.toEqual(true);
-});
-
-it('Auto-starts when start = true is passed to constructor.', () => {
-    expect(new Promise((resolve, reject) => {
-        let blinker: Blinker;
-        const timeout: NodeJS.Timer = setTimeout(() => {
-            resolve(false);
-            blinker.stop();
-        }, 1000);
-        try {
-            blinker = new Blinker(100, true).subscribe(() => {
-                clearTimeout(timeout);
-                blinker.stop();
-                resolve(true);
-            });
-        } catch (e) {
-            reject(e);
-        }
-    })).resolves.toEqual(true);
-});
-
-it('Does not auto-start when start = false is passed to constructor.', () => {
-    expect(new Promise((resolve, reject) => {
-        let blinker: Blinker;
-        const timeout: NodeJS.Timer = setTimeout(() => {
-            resolve(true);
-            blinker.stop();
-        }, 1000);
-        try {
-            blinker = new Blinker(100, false).subscribe(() => {
-                clearTimeout(timeout);
-                blinker.stop();
+it("Auto-starts when only milliseconds is passed to constructor.", () => {
+    expect(
+        new Promise((resolve, reject) => {
+            const timeout: NodeJS.Timer = setTimeout(() => {
                 resolve(false);
-            });
-        } catch (e) {
-            reject(e);
-        }
-    })).resolves.toEqual(true);
+            }, 1000);
+            try {
+                new Blinker(100).subscribe(() => {
+                    resolve(true);
+                    clearTimeout(timeout);
+                });
+            } catch (e) {
+                reject(e);
+            }
+        })
+    ).resolves.toEqual(true);
 });
 
-it('Calls all subscribers within at the appropriate period of time.', () => {
-    jest.spyOn(global, 'setInterval');
+it("Auto-starts when start = true is passed to constructor.", () => {
+    expect(
+        new Promise((resolve, reject) => {
+            let blinker: Blinker;
+            const timeout: NodeJS.Timer = setTimeout(() => {
+                resolve(false);
+                blinker.stop();
+            }, 1000);
+            try {
+                blinker = new Blinker(100, true).subscribe(() => {
+                    clearTimeout(timeout);
+                    blinker.stop();
+                    resolve(true);
+                });
+            } catch (e) {
+                reject(e);
+            }
+        })
+    ).resolves.toEqual(true);
+});
+
+it("Does not auto-start when start = false is passed to constructor.", () => {
+    expect(
+        new Promise((resolve, reject) => {
+            let blinker: Blinker;
+            const timeout: NodeJS.Timer = setTimeout(() => {
+                resolve(true);
+                blinker.stop();
+            }, 1000);
+            try {
+                blinker = new Blinker(100, false).subscribe(() => {
+                    clearTimeout(timeout);
+                    blinker.stop();
+                    resolve(false);
+                });
+            } catch (e) {
+                reject(e);
+            }
+        })
+    ).resolves.toEqual(true);
+});
+
+it("Calls all subscribers within at the appropriate period of time.", () => {
+    jest.spyOn(global, "setInterval");
     const interval = 765;
     const callback1 = jest.fn();
     const callback2 = jest.fn();
@@ -80,7 +86,10 @@ it('Calls all subscribers within at the appropriate period of time.', () => {
         .subscribe(callback3);
 
     setTimeout(() => {
-        expect(setInterval).toHaveBeenLastCalledWith(expect.any(Function), interval);
+        expect(setInterval).toHaveBeenLastCalledWith(
+            expect.any(Function),
+            interval
+        );
         expect(callback1).toHaveBeenCalledTimes(5);
         expect(callback2).toHaveBeenCalledTimes(5);
         expect(callback3).toHaveBeenCalledTimes(5);
@@ -89,8 +98,8 @@ it('Calls all subscribers within at the appropriate period of time.', () => {
     jest.advanceTimersByTime(interval * 10);
 });
 
-it('Does not call subscribers once stopped.', () => {
-    jest.spyOn(global, 'setInterval');
+it("Does not call subscribers once stopped.", () => {
+    jest.spyOn(global, "setInterval");
     const interval = 765;
     const callback1 = jest.fn();
     const callback2 = jest.fn();
@@ -101,14 +110,20 @@ it('Does not call subscribers once stopped.', () => {
         .subscribe(callback3);
 
     setTimeout(() => {
-        expect(setInterval).toHaveBeenLastCalledWith(expect.any(Function), interval);
+        expect(setInterval).toHaveBeenLastCalledWith(
+            expect.any(Function),
+            interval
+        );
         expect(callback1).toHaveBeenCalledTimes(5);
         expect(callback2).toHaveBeenCalledTimes(5);
         expect(callback3).toHaveBeenCalledTimes(5);
         blinker.stop();
 
         setTimeout(() => {
-            expect(setInterval).toHaveBeenLastCalledWith(expect.any(Function), interval);
+            expect(setInterval).toHaveBeenLastCalledWith(
+                expect.any(Function),
+                interval
+            );
             expect(callback1).toHaveBeenCalledTimes(5);
             expect(callback2).toHaveBeenCalledTimes(5);
             expect(callback3).toHaveBeenCalledTimes(5);
@@ -117,8 +132,8 @@ it('Does not call subscribers once stopped.', () => {
     jest.advanceTimersByTime(interval * 10);
 });
 
-it('Calls subscribers once started.', () => {
-    jest.spyOn(global, 'setInterval');
+it("Calls subscribers once started.", () => {
+    jest.spyOn(global, "setInterval");
     const interval = 765;
     const callback1 = jest.fn();
     const callback2 = jest.fn();
@@ -135,7 +150,10 @@ it('Calls subscribers once started.', () => {
         blinker.start();
 
         setTimeout(() => {
-            expect(setInterval).toHaveBeenLastCalledWith(expect.any(Function), interval);
+            expect(setInterval).toHaveBeenLastCalledWith(
+                expect.any(Function),
+                interval
+            );
             expect(callback1).toHaveBeenCalledTimes(5);
             expect(callback2).toHaveBeenCalledTimes(5);
             expect(callback3).toHaveBeenCalledTimes(5);
@@ -145,11 +163,12 @@ it('Calls subscribers once started.', () => {
     jest.advanceTimersByTime(interval * 10);
 });
 
-it('Does not allow a subscriber to be subscribed multiple times.', () => {
+it("Does not allow a subscriber to be subscribed multiple times.", () => {
     const interval = 432;
     const callback = jest.fn();
     const blinker = new Blinker(interval)
-        .subscribe(callback).subscribe(callback);
+        .subscribe(callback)
+        .subscribe(callback);
 
     setTimeout(() => {
         expect(callback).toHaveBeenCalledTimes(3);
@@ -158,7 +177,7 @@ it('Does not allow a subscriber to be subscribed multiple times.', () => {
     jest.advanceTimersByTime(interval * 6);
 });
 
-it('Does not call subscribers which have unsubscribed.', () => {
+it("Does not call subscribers which have unsubscribed.", () => {
     const interval = 891;
     const callback = jest.fn();
     const blinker = new Blinker(interval).subscribe(callback);
@@ -174,7 +193,7 @@ it('Does not call subscribers which have unsubscribed.', () => {
     jest.advanceTimersByTime(interval * 9);
 });
 
-it('Alternates between on and off, starting with on.', () => {
+it("Alternates between on and off, starting with on.", () => {
     const interval = 639;
     const callback = jest.fn();
     const blinker = new Blinker(interval).subscribe(callback);
@@ -198,7 +217,7 @@ it('Alternates between on and off, starting with on.', () => {
     jest.advanceTimersByTime(interval * 3);
 });
 
-it('isActive properly reports whether the blinker is running.', () => {
+it("isActive properly reports whether the blinker is running.", () => {
     const interval = 113;
     const blinker = new Blinker(interval).subscribe(jest.fn());
     expect(blinker.isActive).toEqual(true);

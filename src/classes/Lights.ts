@@ -1,13 +1,12 @@
-import Blinker from './Blinker';
-import { Gpio } from 'pigpio';
+import Blinker from "./Blinker";
+import { Gpio } from "pigpio";
 
-type ColorArray = [number, number, number]|[boolean, boolean, boolean];
+type ColorArray = [number, number, number] | [boolean, boolean, boolean];
 
 /**
  * Raspberry Pi GPIO RGB light API.
  */
 class Lights {
-
     /**
      * GPIO pin connected to the red LED
      * @private
@@ -35,7 +34,7 @@ class Lights {
      *   Thus, you should probably call {@link Blinker#stop} before altering this variable.
      * @private
      */
-    private blinker: Blinker|null = null;
+    private blinker: Blinker | null = null;
 
     /**
      * Constructor
@@ -45,15 +44,21 @@ class Lights {
      * @param invert {boolean} Whether the signals to these lights should be inverted before
      *   writing. E.g., true = off and false = on.
      */
-    constructor(redGpioPort: number, greenGpioPort: number, blueGpioPort: number, invert: boolean) {
-        if (redGpioPort == greenGpioPort ||
+    constructor(
+        redGpioPort: number,
+        greenGpioPort: number,
+        blueGpioPort: number,
+        invert: boolean
+    ) {
+        if (
+            redGpioPort == greenGpioPort ||
             greenGpioPort == blueGpioPort ||
             redGpioPort == blueGpioPort
         ) {
-            throw new Error('GPIO pins must all be unique.');
+            throw new Error("GPIO pins must all be unique.");
         }
         if (redGpioPort < 0 || greenGpioPort < 0 || blueGpioPort < 0) {
-            throw new Error('GPIO pins must be greater than or equal to 0.');
+            throw new Error("GPIO pins must be greater than or equal to 0.");
         }
         this.redLight = new Gpio(redGpioPort, { mode: Gpio.OUTPUT });
         this.greenLight = new Gpio(greenGpioPort, { mode: Gpio.OUTPUT });
@@ -76,7 +81,12 @@ class Lights {
      * @throws Error if any of the three color values passed fall outside the range 0-255.
      * @throws Error if the passed frequency is less than or equal to 0.
      */
-    public startFlashing(red: number, green: number, blue: number, frequency: number): void;
+    public startFlashing(
+        red: number,
+        green: number,
+        blue: number,
+        frequency: number
+    ): void;
     /**
      * Start flashing a given color at a given frequency. LED will continue to flash until
      *   the program stops or {@link stopFlashing} or {@link off} is called. {@link write} does
@@ -88,42 +98,68 @@ class Lights {
      *   Expected to be greater than or equal to 1.
      * @throws Error if the passed frequency is less than or equal to 0.
      */
-    public startFlashing(red: boolean, green: boolean, blue: boolean, frequency: number): void;
-    public startFlashing(red: number|boolean, green: number|boolean, blue: number|boolean,
-                         frequency: number): void {
+    public startFlashing(
+        red: boolean,
+        green: boolean,
+        blue: boolean,
+        frequency: number
+    ): void;
+    public startFlashing(
+        red: number | boolean,
+        green: number | boolean,
+        blue: number | boolean,
+        frequency: number
+    ): void {
         if (frequency <= 0) {
-            throw new Error('Flash frequency must be greater than or equal to 1.');
+            throw new Error(
+                "Flash frequency must be greater than or equal to 1."
+            );
         }
 
-        if (typeof red === 'boolean' && typeof green === 'boolean' && typeof blue === 'boolean') {
+        if (
+            typeof red === "boolean" &&
+            typeof green === "boolean" &&
+            typeof blue === "boolean"
+        ) {
             this.stopFlashing();
 
-            this.blinker = new Blinker(frequency).subscribe((state: boolean) => {
-                if (state) {
-                    this.write(red, blue, green);
-                } else {
-                    this.write(false, false, false);
+            this.blinker = new Blinker(frequency).subscribe(
+                (state: boolean) => {
+                    if (state) {
+                        this.write(red, blue, green);
+                    } else {
+                        this.write(false, false, false);
+                    }
                 }
-            });
+            );
         } else if (
-            typeof red === 'number' &&
-            typeof green === 'number' &&
-            typeof blue === 'number'
+            typeof red === "number" &&
+            typeof green === "number" &&
+            typeof blue === "number"
         ) {
-            if (red < 0 || red > 255 || green < 0 || green > 255 || blue < 0 || blue > 255) {
+            if (
+                red < 0 ||
+                red > 255 ||
+                green < 0 ||
+                green > 255 ||
+                blue < 0 ||
+                blue > 255
+            ) {
                 throw new Error(
-                    'Color values passed to startFlashing() must be between 0 and 255 inclusively.'
+                    "Color values passed to startFlashing() must be between 0 and 255 inclusively."
                 );
             }
             this.stopFlashing();
 
-            this.blinker = new Blinker(frequency).subscribe((state: boolean) => {
-                if (state) {
-                    this.write(red, green, blue);
-                } else {
-                    this.write(0, 0, 0);
+            this.blinker = new Blinker(frequency).subscribe(
+                (state: boolean) => {
+                    if (state) {
+                        this.write(red, green, blue);
+                    } else {
+                        this.write(0, 0, 0);
+                    }
                 }
-            });
+            );
         }
     }
 
@@ -168,18 +204,33 @@ class Lights {
      * @throws Error if an illegal combination of arguments is provided.
      */
     public write(red: number, green: number, blue: number): void;
-    public write(red: number|boolean|ColorArray, green?: number|boolean,
-                 blue?: number|boolean): void {
+    public write(
+        red: number | boolean | ColorArray,
+        green?: number | boolean,
+        blue?: number | boolean
+    ): void {
         if (Array.isArray(red)) {
             green = red[1];
             blue = red[2];
             red = red[0];
         }
 
-        if (typeof red === 'number' && typeof green === 'number' && typeof blue === 'number') {
-            if (red < 0 || red > 255 || green < 0 || green > 255 || blue < 0 || blue > 255) {
+        if (
+            typeof red === "number" &&
+            typeof green === "number" &&
+            typeof blue === "number"
+        ) {
+            if (
+                red < 0 ||
+                red > 255 ||
+                green < 0 ||
+                green > 255 ||
+                blue < 0 ||
+                blue > 255
+            ) {
                 throw new Error(
-                    'Colors must be between 0 and 255 (inclusively) or boolean values.');
+                    "Colors must be between 0 and 255 (inclusively) or boolean values."
+                );
             }
             if (this.invert) {
                 red = 255 - red;
@@ -190,10 +241,10 @@ class Lights {
             this.redLight.pwmWrite(red);
             this.greenLight.pwmWrite(green);
             this.blueLight.pwmWrite(blue);
-
-        } else if (typeof red === 'boolean' &&
-            typeof green === 'boolean' &&
-            typeof blue === 'boolean'
+        } else if (
+            typeof red === "boolean" &&
+            typeof green === "boolean" &&
+            typeof blue === "boolean"
         ) {
             if (this.invert) {
                 red = !red;
@@ -202,7 +253,9 @@ class Lights {
             }
 
             if (red && green && blue) {
-                throw new Error('You may not digital write to all three LEDs at the same time.');
+                throw new Error(
+                    "You may not digital write to all three LEDs at the same time."
+                );
             }
 
             this.redLight.digitalWrite(red ? 1 : 0);
@@ -210,7 +263,8 @@ class Lights {
             this.blueLight.digitalWrite(blue ? 1 : 0);
         } else {
             throw new Error(
-                'Arguments to Lights.write() must be either all numbers or all booleans.');
+                "Arguments to Lights.write() must be either all numbers or all booleans."
+            );
         }
     }
 }

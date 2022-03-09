@@ -1,15 +1,15 @@
-import Lights from '../src/classes/Lights';
-import { Gpio } from '../__mocks__/pigpio';
+import Lights from "./Lights";
+import { Gpio } from "../../__mocks__/pigpio";
 
 jest.useFakeTimers();
 
-const digitalSpy = jest.spyOn(Gpio.prototype, 'digitalWrite');
-const pwmSpy = jest.spyOn(Gpio.prototype, 'pwmWrite');
+const digitalSpy = jest.spyOn(Gpio.prototype, "digitalWrite");
+const pwmSpy = jest.spyOn(Gpio.prototype, "pwmWrite");
 
 interface IDiode {
-    pins: [number, number, number],
-    vals: [boolean, boolean, boolean]|[number, number, number],
-    invert: boolean
+    pins: [number, number, number];
+    vals: [boolean, boolean, boolean] | [number, number, number];
+    invert: boolean;
     writeAsArray: boolean;
 }
 class DigitalDiode implements IDiode {
@@ -18,10 +18,18 @@ class DigitalDiode implements IDiode {
     invert: boolean;
     writeAsArray: boolean;
 
-    constructor(pin1: number, pin2: number, pin3: number, val1: boolean,
-                val2: boolean, val3: boolean, invert: boolean, writeAsArray: boolean) {
-        this.pins = [ pin1, pin2, pin3 ];
-        this.vals = [ val1, val2, val3 ];
+    constructor(
+        pin1: number,
+        pin2: number,
+        pin3: number,
+        val1: boolean,
+        val2: boolean,
+        val3: boolean,
+        invert: boolean,
+        writeAsArray: boolean
+    ) {
+        this.pins = [pin1, pin2, pin3];
+        this.vals = [val1, val2, val3];
         this.invert = invert;
         this.writeAsArray = writeAsArray;
     }
@@ -32,10 +40,18 @@ class PwmDiode implements IDiode {
     invert: boolean;
     writeAsArray: boolean;
 
-    constructor(pin1: number, pin2: number, pin3: number, val1: number,
-                val2: number, val3: number, invert: boolean, writeAsArray: boolean) {
-        this.pins = [ pin1, pin2, pin3 ];
-        this.vals = [ val1, val2, val3 ];
+    constructor(
+        pin1: number,
+        pin2: number,
+        pin3: number,
+        val1: number,
+        val2: number,
+        val3: number,
+        invert: boolean,
+        writeAsArray: boolean
+    ) {
+        this.pins = [pin1, pin2, pin3];
+        this.vals = [val1, val2, val3];
         this.invert = invert;
         this.writeAsArray = writeAsArray;
     }
@@ -59,7 +75,12 @@ function testBasicWrites(diodes: IDiode[]) {
 
     // Call the write methods for each diode.
     for (const diode of diodes) {
-        const lights = new Lights(diode.pins[0], diode.pins[1], diode.pins[2], diode.invert);
+        const lights = new Lights(
+            diode.pins[0],
+            diode.pins[1],
+            diode.pins[2],
+            diode.invert
+        );
         if (diode instanceof PwmDiode) {
             if (diode.writeAsArray) {
                 lights.write(diode.vals);
@@ -101,7 +122,10 @@ function testBasicWrites(diodes: IDiode[]) {
             // And for each pin on the diode
             for (let j = 0; j < diode.pins.length; j++) {
                 // If this mock call index corresponds to the current diode pin
-                if ((spy.mock.instances[spyIndex + i] as any).pin === diode.pins[j]) {
+                if (
+                    (spy.mock.instances[spyIndex + i] as any).pin ===
+                    diode.pins[j]
+                ) {
                     // Confirm that the value passed to this mock call matches the diode
                     //  value that was passed to this function. Digital diodes written as a 1/0,
                     //  but we store true/false in our tests.
@@ -113,16 +137,18 @@ function testBasicWrites(diodes: IDiode[]) {
                         } else {
                             expected = diode.vals[j] ? 1 : 0;
                         }
-                        expect((spy.mock.calls[spyIndex + i] as any)[0])
-                            .toEqual(expected);
+                        expect(
+                            (spy.mock.calls[spyIndex + i] as any)[0]
+                        ).toEqual(expected);
                     } else if (diode instanceof PwmDiode) {
                         // Invert expected output if necessary
                         let expected = diode.vals[j];
                         if (diode.invert) {
                             expected = 255 - expected;
                         }
-                        expect((spy.mock.calls[spyIndex + i] as any)[0])
-                            .toEqual(expected);
+                        expect(
+                            (spy.mock.calls[spyIndex + i] as any)[0]
+                        ).toEqual(expected);
                     }
                     pinsSeen++;
                     break;
@@ -134,69 +160,69 @@ function testBasicWrites(diodes: IDiode[]) {
     }
 }
 
-it('Does not allow pins less than 0.', () => {
+it("Does not allow pins less than 0.", () => {
     expect(() => {
         new Lights(0, 1, -2, false);
     }).toThrow(Error);
 });
 
-it('Writes the correct values on digital writes.', () => {
+it("Writes the correct values on digital writes.", () => {
     testBasicWrites([
         new DigitalDiode(11, 12, 13, true, true, false, false, false),
         new DigitalDiode(14, 15, 16, false, true, true, false, false),
-        new DigitalDiode(18, 19, 20, false, false, false, false, false)
+        new DigitalDiode(18, 19, 20, false, false, false, false, false),
     ]);
 });
 
-it('Writes the correct values on PWM writes.', () => {
+it("Writes the correct values on PWM writes.", () => {
     testBasicWrites([
         new PwmDiode(10, 100, 1353, 50, 150, 10, false, false),
         new PwmDiode(7, 6, 4, 13, 123, 84, false, false),
-        new PwmDiode(31, 65, 1, 50, 63, 137, false, false)
+        new PwmDiode(31, 65, 1, 50, 63, 137, false, false),
     ]);
 });
 
-it('Does not allow pin IDs less than 0.', () => {
+it("Does not allow pin IDs less than 0.", () => {
     expect(() => {
         testBasicWrites([
-            new PwmDiode(10, -100, 1353, 50, 150, 10, false, false)
+            new PwmDiode(10, -100, 1353, 50, 150, 10, false, false),
         ]);
     }).toThrow(Error);
 });
 
-it('Does not allow PWM writes less than 0.', () => {
+it("Does not allow PWM writes less than 0.", () => {
     expect(() => {
         testBasicWrites([
-            new PwmDiode(10, 100, 1353, -50, 150, 10, false, false)
+            new PwmDiode(10, 100, 1353, -50, 150, 10, false, false),
         ]);
     }).toThrow(Error);
 });
 
-it('Does not allow PWM writes greater than 255.', () => {
+it("Does not allow PWM writes greater than 255.", () => {
     expect(() => {
         testBasicWrites([
-            new PwmDiode(10, 100, 1353, 50, 256, 10, false, false)
+            new PwmDiode(10, 100, 1353, 50, 256, 10, false, false),
         ]);
     }).toThrow(Error);
 });
 
-it('Does not allow writes of different values to the same pin.', () => {
+it("Does not allow writes of different values to the same pin.", () => {
     expect(() => {
         testBasicWrites([
             new PwmDiode(10, 10, 1353, 50, 256, 10, false, false),
-            new DigitalDiode(10, 10, 1353, false, false, false, false, false)
+            new DigitalDiode(10, 10, 1353, false, false, false, false, false),
         ]);
     }).toThrow(Error);
 });
 
-it('Accepts writes in the form of an array.', () => {
+it("Accepts writes in the form of an array.", () => {
     testBasicWrites([
         new DigitalDiode(10, 100, 1353, true, false, true, false, true),
-        new PwmDiode(10, 100, 1353, 50, 150, 10, false, true)
+        new PwmDiode(10, 100, 1353, 50, 150, 10, false, true),
     ]);
 });
 
-it('Properly inverts writes.', () => {
+it("Properly inverts writes.", () => {
     testBasicWrites([
         new PwmDiode(1, 2, 3, 50, 150, 10, true, true),
         new PwmDiode(1, 2, 3, 0, 0, 0, true, true),
@@ -207,7 +233,7 @@ it('Properly inverts writes.', () => {
     ]);
 });
 
-it('Does not allow digital writes to all three LEDs at the same time.', () => {
+it("Does not allow digital writes to all three LEDs at the same time.", () => {
     expect(() => {
         testBasicWrites([
             new DigitalDiode(1, 2, 3, true, true, true, false, true),
@@ -230,7 +256,7 @@ it('Does not allow digital writes to all three LEDs at the same time.', () => {
     }).toThrow(Error);
 });
 
-it('Does not allow mixed writes of PWM and digital.', () => {
+it("Does not allow mixed writes of PWM and digital.", () => {
     expect(() => {
         const lights = new Lights(1, 2, 3, false);
         // @ts-ignore Intentional test
@@ -238,8 +264,7 @@ it('Does not allow mixed writes of PWM and digital.', () => {
     }).toThrow(Error);
 });
 
-
-it('Turns off all pins with off().', () => {
+it("Turns off all pins with off().", () => {
     const lights = new Lights(1, 2, 3, false);
     lights.write(25, 66, 127);
     expect(digitalSpy).toHaveBeenCalledTimes(0);
@@ -254,13 +279,13 @@ it('Turns off all pins with off().', () => {
     expect((digitalSpy.mock.calls[6] as any)[0]).toEqual(0);
     expect((digitalSpy.mock.calls[7] as any)[0]).toEqual(0);
     expect((digitalSpy.mock.calls[8] as any)[0]).toEqual(0);
-    lights.write([ false, false, true ]);
+    lights.write([false, false, true]);
     lights.off();
     expect(digitalSpy).toHaveBeenCalledTimes(15);
     expect((digitalSpy.mock.calls[12] as any)[0]).toEqual(0);
     expect((digitalSpy.mock.calls[13] as any)[0]).toEqual(0);
     expect((digitalSpy.mock.calls[14] as any)[0]).toEqual(0);
-    lights.write([ 11, 22, 33 ]);
+    lights.write([11, 22, 33]);
     lights.off();
     expect(digitalSpy).toHaveBeenCalledTimes(18);
     expect((digitalSpy.mock.calls[15] as any)[0]).toEqual(0);
@@ -268,7 +293,7 @@ it('Turns off all pins with off().', () => {
     expect((digitalSpy.mock.calls[17] as any)[0]).toEqual(0);
 });
 
-it('Enables PWM flashing with startFlashing()', () => {
+it("Enables PWM flashing with startFlashing()", () => {
     const lights = new Lights(1, 2, 3, false);
     lights.startFlashing(255, 70, 0, 500);
     setTimeout(() => {
@@ -278,7 +303,7 @@ it('Enables PWM flashing with startFlashing()', () => {
     jest.runAllTimers();
 });
 
-it('Enables digital flashing with startFlashing()', () => {
+it("Enables digital flashing with startFlashing()", () => {
     const lights = new Lights(1, 2, 3, false);
     lights.startFlashing(true, false, false, 500);
     setTimeout(() => {
@@ -288,7 +313,7 @@ it('Enables digital flashing with startFlashing()', () => {
     jest.runAllTimers();
 });
 
-it('Stops flashing with stopFlashing()', () => {
+it("Stops flashing with stopFlashing()", () => {
     const digitalLights = new Lights(1, 2, 3, false);
     const pwmLights = new Lights(1, 2, 3, false);
     digitalLights.startFlashing(true, false, false, 500);
@@ -306,7 +331,7 @@ it('Stops flashing with stopFlashing()', () => {
     jest.runAllTimers();
 });
 
-it('Stops flashing with off()', () => {
+it("Stops flashing with off()", () => {
     const digitalLights = new Lights(1, 2, 3, false);
     const pwmLights = new Lights(1, 2, 3, false);
     digitalLights.startFlashing(true, false, false, 500);
@@ -324,7 +349,7 @@ it('Stops flashing with off()', () => {
     jest.runAllTimers();
 });
 
-it('Does not allow flashing at a frequency less than or equal to 0.', () => {
+it("Does not allow flashing at a frequency less than or equal to 0.", () => {
     const digitalLights = new Lights(1, 2, 3, false);
     const pwmLights = new Lights(1, 2, 3, false);
     expect(() => {
@@ -346,7 +371,7 @@ it('Does not allow flashing at a frequency less than or equal to 0.', () => {
     jest.runAllTimers();
 });
 
-it('Does not allow flashing values less than 0.', () => {
+it("Does not allow flashing values less than 0.", () => {
     const lights = new Lights(1, 2, 3, false);
     expect(() => {
         lights.startFlashing(100, -200, 255, 100);
@@ -358,7 +383,7 @@ it('Does not allow flashing values less than 0.', () => {
     jest.runAllTimers();
 });
 
-it('Does not allow flashing values greater than 255.', () => {
+it("Does not allow flashing values greater than 255.", () => {
     const lights = new Lights(1, 2, 3, false);
     expect(() => {
         lights.startFlashing(100, 200, 256, 100);

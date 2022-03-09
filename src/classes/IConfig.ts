@@ -1,4 +1,4 @@
-import ITally from './ITally';
+import ITally from "./ITally";
 
 interface IConfig {
     switcherIP: string;
@@ -6,4 +6,3 @@ interface IConfig {
 }
 
 export default IConfig;
-

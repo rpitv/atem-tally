@@ -1,14 +1,17 @@
 class Gpio {
-
     pin: number;
 
     constructor(pin: number) {
         this.pin = pin;
     }
 
-    digitalWrite() { /* stub */ }
+    digitalWrite() {
+        /* stub */
+    }
 
-    pwmWrite() { /* stub */ }
+    pwmWrite() {
+        /* stub */
+    }
 }
 
 export { Gpio };

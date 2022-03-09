@@ -1,4 +1,4 @@
-import Lights from './Lights';
+import Lights from "./Lights";
 
 interface ITally {
     inputID: number;
