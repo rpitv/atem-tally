@@ -1,4 +1,4 @@
-# ATEM Tally for Raspberry Pi
+# ATEM ITally for Raspberry Pi
 This is a simple camera tally system built to work with Blackmagic Design ATEM 2 switchers on a Raspberry Pi.
 
 Necessary supplies:

@@ -49,6 +49,9 @@ typings/
 # TypeScript cache
 *.tsbuildinfo
 
+# TypeScript build artifacts
+src/*.js
+
 # Optional npm cache directory
 .npm
 
@@ -114,5 +117,5 @@ dist
 .idea/modules.xml
 .idea/vcs.xml
 
-# Tally config
+# ITally config
 tally.config.json
