@@ -1,4 +1,8 @@
 # ATEM ITally for Raspberry Pi
+
+[![Node.js CI](https://github.com/rpitv/atem-tally/actions/workflows/node.js.yml/badge.svg)](https://github.com/rpitv/atem-tally/actions/workflows/node.js.yml)
+[![codecov](https://codecov.io/gh/rpitv/atem-tally/branch/master/graph/badge.svg?token=doiWhO8Q1K)](https://codecov.io/gh/rpitv/atem-tally)
+
 This is a simple camera tally system built to work with Blackmagic Design ATEM 2 switchers on a Raspberry Pi.
 
 Necessary supplies:
