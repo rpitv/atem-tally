@@ -1,4 +1,4 @@
-import Lights from "./Lights";
+import { LEDArray } from "pi-led-control";
 
 interface ITally {
     inputID: number;
@@ -6,7 +6,7 @@ interface ITally {
     disconnectedFlashFrequency: number;
     disconnectedFlashColor: [number, number, number];
     invertSignals: false;
-    lights?: Lights;
+    lights?: LEDArray;
 }
 
 export default ITally;

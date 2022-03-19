@@ -1,4 +1,4 @@
-import Lights from "./classes/Lights";
+import { Curves, LEDArray, Animation } from "pi-led-control";
 import Colors from "./classes/Colors";
 import fs from "fs";
 import { Atem } from "atem-connection";
@@ -18,11 +18,13 @@ function allDisconnected() {
             );
             continue;
         }
-        lights.startFlashing(
-            tally.disconnectedFlashColor[0],
-            tally.disconnectedFlashColor[1],
-            tally.disconnectedFlashColor[2],
-            tally.disconnectedFlashFrequency
+        lights.animate(
+            new Animation(Curves.Square(tally.disconnectedFlashFrequency)),
+            [
+                tally.disconnectedFlashColor[0],
+                tally.disconnectedFlashColor[1],
+                tally.disconnectedFlashColor[2],
+            ]
         );
     }
 }
@@ -36,7 +38,7 @@ function allConnected() {
             );
             continue;
         }
-        lights.stopFlashing();
+        lights.stopAnimation();
     }
 }
 
@@ -78,13 +80,13 @@ switcher.on("stateChanged", (state: any) => {
             mixer.inTransition &&
             (tally.inputID === pgm || tally.inputID === pvw)
         ) {
-            tally.lights.write(Colors.YELLOW);
+            tally.lights.write(...Colors.YELLOW);
         } else if (tally.inputID === pgm) {
             // This camera is in program.
-            tally.lights.write(Colors.RED);
+            tally.lights.write(...Colors.RED);
         } else if (tally.inputID === pvw) {
             // This camera is in preview.
-            tally.lights.write(Colors.GREEN);
+            tally.lights.write(...Colors.GREEN);
         } else {
             // Camera is not in any preview or program.
             tally.lights.off();
@@ -99,10 +101,8 @@ if (!config.tallies || !config.switcherIP) {
 
 for (const tally of config.tallies) {
     // Create the Lights object based off the Tally's config values
-    tally.lights = new Lights(
-        tally.ledGpioPins[0],
-        tally.ledGpioPins[1],
-        tally.ledGpioPins[2],
+    tally.lights = new LEDArray(
+        [tally.ledGpioPins[0], tally.ledGpioPins[1], tally.ledGpioPins[2]],
         tally.invertSignals
     );
 }
